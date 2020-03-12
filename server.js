@@ -1,34 +1,25 @@
-//***************************************** */
-// require dependencies
 const express = require("express");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 
+const PORT = process.env.PORT || 8080;
+const db = require("./models");
 const app = express();
 
-//declear the PORT
-const PORT = process.env.PORT || 3000;
+app.use(logger("dev"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-//connect to the mongo_db
-mongoose.connect("mongodb://localhost/workout", {
+app.use(express.static("public"));
+
+app.use(require("./routes/route.js"));
+
+
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/nosql", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
-
-app.use(logger("dev"));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json);
-app.use(express.static("public"));
-
-//set up routes
-app.use(require("./routes/route"));
-app.use(require("./routes/view"));
-
-
-
-
-//start the server
 app.listen(PORT, () => {
-    console.log("Server run no: http://localhost:" + PORT);
+    console.log(`App running on port ${PORT}!`);
 });
